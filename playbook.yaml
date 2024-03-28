@@ -1,0 +1,120 @@
+---
+- name: Setup development environment for Lao developers and DevOps teams
+  hosts: dev_servers
+  become: true
+
+  pre_tasks:
+    - name: Update package lists
+      apt: update_cache=yes
+
+  tasks:
+    - name: Install language packs for Lao
+      apt:
+        name: language-pack-laos language-pack-gnome-laos
+        state: present
+
+    - name: Install basic development tools
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - git
+        - curl
+        - wget
+        - zip
+        - unzip
+
+    - name: Add Google Chrome repository
+      apt_repository:
+        repo: 'deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main'
+        state: present
+
+    - name: Install Google Chrome
+      apt:
+        name: google-chrome-stable
+        state: present
+
+    - name: Install IDEs
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - webstorm
+        - intellij-idea
+
+    - name: Install Code Editors
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - code
+
+    - name: Install Visual Studio Code
+      apt:
+        name: code
+        state: present
+
+    - name: Install Node.js and npm
+      apt:
+        name:
+          - nodejs
+          - npm
+        state: present
+
+    - name: Install JetBrains Toolbox
+      get_url:
+        url: https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.10527.tar.gz
+        dest: /tmp/jetbrains-toolbox.tar.gz
+      unarchive:
+        src: /tmp/jetbrains-toolbox.tar.gz
+        dest: /opt/jetbrains-toolbox
+      file:
+        src: /opt/jetbrains-toolbox/jetbrains-toolbox
+        dest: /usr/bin/jetbrains-toolbox
+        state: link
+        mode: 0755
+
+    - name: Install Docker (pre-requisites)
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-lkeyring
+
+    - name: Add Docker repository key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpgkey
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable'
+        state: present
+
+    - name: Update package lists (again)
+      apt: update_cache=yes
+
+    - name: Install Docker engine
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Create Docker group
+      group:
+        name: docker
+        state: present
+
+    - name: Add user to Docker group
+      usermod:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+  post_tasks:
+    - name: Reboot the system
+      reboot:
+...
+
