@@ -1,18 +1,14 @@
 ---
-- name: Setup development environment for Lao developers and DevOps teams
-  hosts: dev_servers
+- name: Lao used softwares
+  hosts: 10.0.0.12
   become: true
 
   pre_tasks:
     - name: Update package lists
-      apt: update_cache=yes
+      apt: 
+        update_cache=yes
 
   tasks:
-    - name: Install language packs for Lao
-      apt:
-        name: language-pack-laos language-pack-gnome-laos
-        state: present
-
     - name: Install basic development tools
       apt:
         name: "{{ item }}"
@@ -23,6 +19,11 @@
         - wget
         - zip
         - unzip
+ 
+    - name: Import Google Chrome signing key
+      apt_key:
+        url: https://dl.google.com/linux/linux_signing_key.pub
+        state: present
 
     - name: Add Google Chrome repository
       apt_repository:
@@ -34,21 +35,7 @@
         name: google-chrome-stable
         state: present
 
-    - name: Install IDEs
-      apt:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - webstorm
-        - intellij-idea
-
-    - name: Install Code Editors
-      apt:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - code
-
+    
     - name: Install Visual Studio Code
       apt:
         name: code
@@ -63,18 +50,11 @@
 
     - name: Install JetBrains Toolbox
       get_url:
-        url: https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.10527.tar.gz
+        url: https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.2.3.20090.tar.gz  
         dest: /tmp/jetbrains-toolbox.tar.gz
-      unarchive:
-        src: /tmp/jetbrains-toolbox.tar.gz
-        dest: /opt/jetbrains-toolbox
-      file:
-        src: /opt/jetbrains-toolbox/jetbrains-toolbox
-        dest: /usr/bin/jetbrains-toolbox
-        state: link
-        mode: 0755
+      become: true 
 
-    - name: Install Docker (pre-requisites)
+    - name: Install Docker 
       apt:
         name: "{{ item }}"
         state: present
@@ -82,11 +62,13 @@
         - apt-transport-https
         - ca-certificates
         - curl
-        - gnupg-lkeyring
+        - software-properties-common
+        - python3-pip
+        - python3-setuptools
 
-    - name: Add Docker repository key
+    - name: Import GPG Key for Docker
       apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpgkey
+        url: https://download.docker.com/linux/ubuntu/gpg 
         state: present
 
     - name: Add Docker repository
@@ -94,7 +76,7 @@
         repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable'
         state: present
 
-    - name: Update package lists (again)
+    - name: Update package lists 
       apt: update_cache=yes
 
     - name: Install Docker engine
@@ -107,12 +89,9 @@
         name: docker
         state: present
 
-    - name: Add user to Docker group
-      usermod:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: yes
-
+  vars:
+    docker_os: "ubuntu"  
+    docker_version: "focal"
   post_tasks:
     - name: Reboot the system
       reboot:
