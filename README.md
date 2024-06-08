@@ -1,4 +1,4 @@
-These are the proceedures are used
+These are the proceedures i used
 
 1.install ansible on the master server
 2.then install openssh-server on all the servers using this cmd 'sudo apt update , sudo apt install openssh-server'
