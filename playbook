@@ -48,11 +48,19 @@
           - npm
         state: present
 
-    - name: Install JetBrains Toolbox
-      get_url:
-        url: https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.2.3.20090.tar.gz  
-        dest: /tmp/jetbrains-toolbox.tar.gz
-      become: true 
+   - name: Install VLC
+     apt:
+       name: vlc
+       state: present
+       update_cache: yes
+
+   - name: Install IntelliJ IDEA
+     apt:
+       name: 
+         - default-jdk
+         - intellij-idea-community
+       state: present
+       update_cache: yes
 
     - name: Install Docker 
       apt:
