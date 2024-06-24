@@ -2,7 +2,7 @@ These are the proceedures i used
 
 1.install ansible on the master server
 2.then install openssh-server on all the servers using this cmd 'sudo apt update , sudo apt install openssh-server'
-3.generate a key on the master using the cmd 'ssh-kengen -t  ed25519 -C 'ansible'
+3.generate a key on the master using the cmd 'ssh-keygen -t  ed25519 -C 'ansible'
 4.share the public key to the client servers
   to see the key used 'ls -la .ssh'
   then  'cat .ssh/ansible.pub '
