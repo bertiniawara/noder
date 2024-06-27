@@ -1,6 +1,6 @@
 ---
 - name: Lao used softwares
-  hosts: 10.0.0.12
+  hosts: 192.168.31.80
   become: true
 
   pre_tasks:
@@ -48,19 +48,19 @@
           - npm
         state: present
 
-   - name: Install VLC
-     apt:
-       name: vlc
-       state: present
-       update_cache: yes
+    - name: Install VLC
+      apt:
+        name: vlc
+        state: present
+        update_cache: yes
 
-   - name: Install IntelliJ IDEA
-     apt:
-       name: 
-         - default-jdk
-         - intellij-idea-community
-       state: present
-       update_cache: yes
+    - name: Install IntelliJ IDEA
+      apt:
+        name: 
+          - default-jdk
+          - intellij-idea-community
+        state: present
+        update_cache: yes
 
     - name: Install Docker 
       apt:

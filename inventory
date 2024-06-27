@@ -1,2 +1,2 @@
-10.0.0.12 ansible_user=greatness ansible_pass=BESTDEVOPS
+192.168.31.80 ansible_user=greatness ansible_pass=BESTDEVOPS
  
